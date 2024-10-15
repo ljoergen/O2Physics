@@ -29,9 +29,10 @@
 #include "fastjet/AreaDefinition.hh"
 #include "fastjet/ClusterSequenceArea.hh"
 #include "fastjet/GhostedAreaSpec.hh"
-#include "fastjet/Selector.hh"
-#include "fastjet/tools/Subtractor.hh"
-#include "fastjet/tools/JetMedianBackgroundEstimator.hh"
+// #include "fastjet/Selector.hh"
+// #include "fastjet/tools/Subtractor.hh"
+// #include "fastjet/tools/JetMedianBackgroundEstimator.hh"
+#include "PWGJE/Core/JetBkgSubUtils.h"
 #include "TVector2.h"
 #include "TVector3.h"
 
@@ -64,9 +65,11 @@ struct AngularCorrelationsInJets {
 
   // Jet Cuts
   Configurable<float> fJetR{"jetR", 0.4, "jet resolution parameter"};
-  Configurable<float> fMinJetPt{"minJetPt", 10.0, "minimum total pT to accept jet"};
-  Configurable<float> fMinJetParticlePt{"minJetParticlePt", 0.0, "minimum pT to accept jet particle"};
-  Configurable<float> fMinLeadingPt{"minLeadingPt", 5.0, "minimum pT for leading track"};
+  Configurable<float> fMinJetPt{"minJetPt", 5.0, "minimum total pT to accept jet"};
+  // Configurable<float> fMinJetParticlePt{"minJetParticlePt", 0.0, "minimum pT to accept jet particle"};
+  float fMinJetParticlePt = 0.0;
+  // Configurable<float> fMinLeadingPt{"minLeadingPt", 5.0, "minimum pT for leading track"};
+  float fMinLeadingPt = 5.0;
 
   // Proton Cuts
   Configurable<float> fProtonDCAxyYield{"protonDCAxyYield", 0.05, "[proton] DCAxy cut for yield"};
@@ -129,28 +132,31 @@ struct AngularCorrelationsInJets {
   Configurable<float> fAntideuteronTOFnsigHighCF{"antideuteronTOFnsigmaHighPtCF", 15.0, "[antideuteron] max TOF nsigma with high pT for CF"};
 
   // Helium-3 Cuts
-  Configurable<float> fHeliumDCAxy{"heliumDCAxy", 0.5, "[helium] DCAxy cut"};
+  /* Configurable<float> fHeliumDCAxy{"heliumDCAxy", 0.5, "[helium] DCAxy cut"};
   Configurable<float> fHeliumDCAz{"heliumDCAz", 1.0, "[helium] DCAz cut"};
   Configurable<float> fHeliumTPCTOFpT{"heliumTPCTOFswitchpT", 0.7, "[helium] pT for switch in TPC/TOF nsigma"};
   Configurable<float> fHeliumTPCnsigLowYield{"heliumTPCnsigmaLowPtYield", 4.0, "[helium] max TPC nsigma with low pT for yield"};
   Configurable<float> fHeliumTPCnsigHighYield{"heliumTPCnsigmaHighPtYield", 4.0, "[helium] max TPC nsigma with high pT for yield"};
   Configurable<float> fHeliumTOFnsigLowYield{"heliumTOFnsigmaLowPtYield", 15.0, "[helium] min TOF nsigma with low pT for yield"};
-  Configurable<float> fHeliumTOFnsigHighYield{"heliumTOFnsigmaHighPtYield", 15.0, "[helium] min TOF nsigma with high pT for yield"};
+  Configurable<float> fHeliumTOFnsigHighYield{"heliumTOFnsigmaHighPtYield", 15.0, "[helium] min TOF nsigma with high pT for yield"}; */
 
   // Antihelium-3 Cuts
-  Configurable<float> fAntiheliumDCAxy{"antiheliumDCAxy", 0.5, "[antihelium] DCAxy cut"};
+  /* Configurable<float> fAntiheliumDCAxy{"antiheliumDCAxy", 0.5, "[antihelium] DCAxy cut"};
   Configurable<float> fAntiheliumDCAz{"antiheliumDCAz", 1.0, "[antihelium] DCAz cut"};
   Configurable<float> fAntiheliumTPCTOFpT{"antiheliumTPCTOFswitchpT", 0.7, "[antihelium] pT for switch in TPC/TOF nsigma"};
   Configurable<float> fAntiheliumTPCnsigLowYield{"antiheliumTPCnsigmaLowPtYield", 4.0, "[antihelium] max TPC nsigma with low pT for yield"};
   Configurable<float> fAntiheliumTPCnsigHighYield{"antiheliumTPCnsigmaHighPtYield", 4.0, "[antihelium] max TPC nsigma with high pT for yield"};
   Configurable<float> fAntiheliumTOFnsigLowYield{"antiheliumTOFnsigmaLowPtYield", 15.0, "[antihelium] min TOF nsigma with low pT for yield"};
-  Configurable<float> fAntiheliumTOFnsigHighYield{"antiheliumTOFnsigmaHighPtYield", 15.0, "[antihelium] min TOF nsigma with high pT for yield"};
+  Configurable<float> fAntiheliumTOFnsigHighYield{"antiheliumTOFnsigmaHighPtYield", 15.0, "[antihelium] min TOF nsigma with high pT for yield"}; */
 
-  Configurable<int> fBufferSize{"trackBufferSize", 2000, "Number of mixed-event tracks being stored"};
+  // Configurable<int> fBufferSize{"trackBufferSize", 2000, "Number of mixed-event tracks being stored"};
+  int fBufferSize = 2000;
 
   // QC Configurables
-  Configurable<float> fZVtx{"zVtx", 9999, "max zVertex"};
-  Configurable<float> fRmax{"Rmax", 0.3, "Maximum radius for jet and UE regions"};
+  // Configurable<float> fZVtx{"zVtx", 9999, "max zVertex"};
+  float fZVtx = 9999;
+  // Configurable<float> fRmax{"Rmax", 0.4, "Maximum radius for jet and UE regions"};
+  float fRmax = 0.4;
 
   Service<o2::ccdb::BasicCCDBManager> ccdb;
   int mRunNumber;
@@ -174,6 +180,8 @@ struct AngularCorrelationsInJets {
 
   HistogramRegistry registryData{"dataOutput", {}, OutputObjHandlingPolicy::AnalysisObject, false, true};
   HistogramRegistry registryQA{"dataQA", {}, OutputObjHandlingPolicy::AnalysisObject, false, true};
+
+  JetBkgSubUtils bkgSub;
 
   void init(o2::framework::InitContext&)
   {
@@ -226,6 +234,15 @@ struct AngularCorrelationsInJets {
     registryData.add("hDCAzJetAntihelium", "DCA_{z} of antihelium after TPC cut", HistType::kTH2F, {axisSpecs.ptAxisPos, axisSpecs.dcazAxis});
 
     // Angular Distributions
+    registryQA.add("hPhiFullEvent", "#varphi in full event", HistType::kTH1F, {{1000,-6.3,6.3}});
+    registryQA.add("hPhiPtFullEvent", "#varphi vs. p_{T} in full event", HistType::kTH2F, {axisSpecs.ptAxisPos, {1000,-6.3,6.3}});
+    registryQA.add("hPhiJet", "#varphi in jet", HistType::kTH1F, {{1000,-6.3,6.3}});
+    registryQA.add("hPhiPtJet", "#varphi vs. p_{T} in jet", HistType::kTH2F, {axisSpecs.ptAxisPos, {1000,-6.3,6.3}});
+    registryQA.add("hEtaFullEvent", "#eta in full event", HistType::kTH1F, {{1000,-1,1}});
+    registryQA.add("hEtaPtFullEvent", "#eta vs. p_{T} in full event", HistType::kTH2F, {axisSpecs.ptAxisPos, {1000,-1,1}});
+    registryQA.add("hEtaJet", "#eta in jet", HistType::kTH1F, {{1000,-1,1}});
+    registryQA.add("hEtaPtJet", "#eta vs. p_{T} in jet", HistType::kTH2F, {axisSpecs.ptAxisPos, {1000,-1,1}});
+
     registryData.add("hDeltaPhiSEFull", "#Delta#varphi of particles in single event", HistType::kTH1D, {axisSpecs.angDistPhiAxis});
     registryData.add("hDeltaPhiSEJet", "#Delta#varphi of jet particles in single event", HistType::kTH1D, {axisSpecs.angDistPhiAxis});
     registryData.add("hDeltaPhiSEProton", "#Delta#varphi of protons in single event", HistType::kTH1D, {axisSpecs.angDistPhiAxis});
@@ -523,7 +540,7 @@ struct AngularCorrelationsInJets {
       return false;
 
     // TPC
-    if (track.pt() < fHeliumTPCTOFpT && TMath::Abs(track.tpcNSigmaHe()) > fHeliumTPCnsigLowYield)
+    /* if (track.pt() < fHeliumTPCTOFpT && TMath::Abs(track.tpcNSigmaHe()) > fHeliumTPCnsigLowYield)
       return false;
     if (track.pt() > fHeliumTPCTOFpT && TMath::Abs(track.tpcNSigmaHe()) > fHeliumTPCnsigHighYield)
       return false;
@@ -538,7 +555,7 @@ struct AngularCorrelationsInJets {
     if (track.pt() < fHeliumTPCTOFpT && TMath::Abs(track.tofNSigmaHe()) > fHeliumTOFnsigLowYield)
       return false;
     if (track.pt() > fHeliumTPCTOFpT && TMath::Abs(track.tofNSigmaHe()) > fHeliumTOFnsigHighYield)
-      return false;
+      return false; */
 
     return true;
   }
@@ -550,7 +567,7 @@ struct AngularCorrelationsInJets {
       return false;
 
     // TPC
-    if (track.pt() < fAntiheliumTPCTOFpT && TMath::Abs(track.tpcNSigmaHe()) > fAntiheliumTPCnsigLowYield)
+    /* if (track.pt() < fAntiheliumTPCTOFpT && TMath::Abs(track.tpcNSigmaHe()) > fAntiheliumTPCnsigLowYield)
       return false;
     if (track.pt() > fAntiheliumTPCTOFpT && TMath::Abs(track.tpcNSigmaHe()) > fAntiheliumTPCnsigHighYield)
       return false;
@@ -565,7 +582,7 @@ struct AngularCorrelationsInJets {
     if (track.pt() < fAntiheliumTPCTOFpT && TMath::Abs(track.tofNSigmaHe()) > fAntiheliumTOFnsigLowYield)
       return false;
     if (track.pt() > fAntiheliumTPCTOFpT && TMath::Abs(track.tofNSigmaHe()) > fAntiheliumTOFnsigHighYield)
-      return false;
+      return false; */
 
     return true;
   }
@@ -772,9 +789,9 @@ struct AngularCorrelationsInJets {
     fTempBufferAntideuteron.clear();
     fTempBufferJet.clear();
     fTempBufferFull.clear();
-    std::vector<fastjet::PseudoJet> jetInput;
-    std::map<int, typename U::iterator> particles;
-    std::vector<typename U::iterator> particlesForCF;
+    std::vector<fastjet::PseudoJet> jetInput; // input for jet finder
+    std::map<int, typename U::iterator> particles; // particles for jet reco
+    std::vector<typename U::iterator> particlesForCF; // particles full event angular correlations
     jetInput.clear();
     particles.clear();
     int index = 0;
@@ -785,6 +802,7 @@ struct AngularCorrelationsInJets {
     std::vector<fastjet::PseudoJet> constituents;
     jets.clear();
     constituents.clear();
+    bool doSparse = true;
 
     for (const auto& track : tracks) {
       if (!selectTrack(track))
@@ -799,6 +817,7 @@ struct AngularCorrelationsInJets {
         mass = 0.139; // pion mass as default, ~80% are pions
         registryData.fill(HIST("hTrackProtocol"), 2);
       }
+      // double mass = 0.139;
 
       if (track.pt() > fMinLeadingPt) {
         leadingID = track.globalIndex();
@@ -816,6 +835,12 @@ struct AngularCorrelationsInJets {
       registryQA.fill(HIST("hChi2TPC"), track.pt(), track.tpcChi2NCl());
       registryQA.fill(HIST("hDCAxyFullEvent"), track.pt(), track.dcaXY());
       registryQA.fill(HIST("hDCAzFullEvent"), track.pt(), track.dcaZ());
+      registryQA.fill(HIST("hPhiFullEvent"), track.phi());
+      registryQA.fill(HIST("hPhiPtFullEvent"), track.pt(), track.phi());
+      registryQA.fill(HIST("hEtaFullEvent"), track.eta());
+      registryQA.fill(HIST("hEtaPtFullEvent"), track.pt(), track.eta());
+      
+
       fastjet::PseudoJet inputPseudoJet(track.px(), track.py(), track.pz(), track.energy(mass));
       inputPseudoJet.set_user_index(index);
       particles[index] = track;
@@ -845,13 +870,17 @@ struct AngularCorrelationsInJets {
 
     registryData.fill(HIST("hEventProtocol"), 3);
 
+    // for (const auto& jet : jets) {
+    //   if (jet.pt() < fMinJetPt)
+    //   continue;
+    // }
     hardestJet = jets[0];
 
     if (hardestJet.pt() < fMinJetPt)
       return;
 
     registryData.fill(HIST("hEventProtocol"), 4);
-    if (hardestJet.constituents().size() < 2) // unlikely but maybe yields before this point?
+    if (hardestJet.constituents().size() < 2)
       return;
 
     registryData.fill(HIST("hEventProtocol"), 5);
@@ -863,6 +892,10 @@ struct AngularCorrelationsInJets {
 
     for (const auto& constituent : hardestJet.constituents()) {
       registryData.fill(HIST("hPtJetParticle"), constituent.pt());
+      registryQA.fill(HIST("hPhiJet"), constituent.phi());
+      registryQA.fill(HIST("hPhiPtJet"), constituent.pt(), constituent.phi());
+      registryQA.fill(HIST("hEtaJet"), constituent.eta());
+      registryQA.fill(HIST("hEtaPtJet"), constituent.pt(), constituent.eta());
       if (std::isnan(constituent.phi()) || std::isnan(hardestJet.phi()))
         continue;
       double DeltaPhi = TVector2::Phi_0_2pi(constituent.phi() - hardestJet.phi());
@@ -871,13 +904,8 @@ struct AngularCorrelationsInJets {
       registryData.fill(HIST("hJetConeRadius"), Delta);
     }
 
-    fastjet::Selector selector = fastjet::SelectorAbsEtaMax(1.0) * (!fastjet::SelectorNHardest(2)); // TODO: fix subtraction -> check PWGJE
-    fastjet::JetMedianBackgroundEstimator bkgEst(selector, jetDefBkg, areaDefBkg);
-    fastjet::Subtractor subtractor(&bkgEst);
-    subtractor.set_use_rho_m(true);
-    bkgEst.set_particles(jetInput);
-
-    subtractedJet = subtractor(hardestJet);
+    auto [rho, rhoM] = bkgSub.estimateRhoAreaMedian(jetInput, doSparse);
+    subtractedJet = bkgSub.doRhoAreaSub(hardestJet, rho, rhoM);
     if (subtractedJet.has_constituents()) {
       for (const auto& subConstituent : subtractedJet.constituents()) {
         registryData.fill(HIST("hPtSubtractedJet"), subConstituent.pt());
