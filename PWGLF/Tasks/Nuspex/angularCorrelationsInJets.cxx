@@ -463,7 +463,7 @@ struct AngularCorrelationsInJets {
     }
 
     registryData.fill(HIST("tpcNSigmaProtonCF"), track.pt(), track.tpcNSigmaPr());
-    if (pt < protonTPCTOFpT && (std::abs(track.tpcNSigmaPr() > maxTPCnsigma)))
+    if (pt < protonTPCTOFpT && (std::abs(track.tpcNSigmaPr()) > maxTPCnsigma))
       return false;
 
     double tofNSigma = 999;
@@ -472,7 +472,7 @@ struct AngularCorrelationsInJets {
       tofNSigma = track.tofNSigmaPr();
     }
     
-    if (pt > protonTPCTOFpT && ((std::abs(tofNSigma) > maxTOFnsigma) || std::abs(track.tpcNSigmaPr() > maxTPCnsigma)))
+    if (pt > protonTPCTOFpT && ((std::abs(tofNSigma) > maxTOFnsigma) || std::abs(track.tpcNSigmaPr()) > maxTPCnsigma))
       return false;
 
     if (useRejectionCut && !singleSpeciesTPCNSigma(track))
@@ -544,7 +544,7 @@ struct AngularCorrelationsInJets {
     }
 
     registryData.fill(HIST("tpcNSigmaAntiprotonCF"), track.pt(), track.tpcNSigmaPr());
-    if (pt < antiprotonTPCTOFpT && (std::abs(track.tpcNSigmaPr() > maxTPCnsigma)))
+    if (pt < antiprotonTPCTOFpT && (std::abs(track.tpcNSigmaPr()) > maxTPCnsigma))
       return false;
 
     double tofNSigma = 999;
@@ -553,7 +553,7 @@ struct AngularCorrelationsInJets {
       tofNSigma = track.tofNSigmaPr();
     }
     
-    if (pt > antiprotonTPCTOFpT && ((std::abs(tofNSigma) > maxTOFnsigma) || std::abs(track.tpcNSigmaPr() > maxTPCnsigma)))
+    if (pt > antiprotonTPCTOFpT && ((std::abs(tofNSigma) > maxTOFnsigma) || std::abs(track.tpcNSigmaPr()) > maxTPCnsigma))
       return false;
 
     if (useRejectionCut && !singleSpeciesTPCNSigma(track))
